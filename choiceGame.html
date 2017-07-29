@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<html lang="eng-US">
+<title>Choice</title>
+<link href="choiceGame.css" type="text/css" rel="stylesheet">
+</head>
+<body>
+<div id="mainContainer">
+<!--Introduction-->
+<h1>Introduction</h1>
+<p id="info">This is a simple choice game where you read the story and choose from one of the two options. <span id="deathTextLarge">One option will result in death.</span> If you die the game will restart. Click below to start the game. Have fun!</p>
+<a href='linkhref.html' id='mylink'>Click here to start the game!</a>
+
+<!--Runs the game-->
+
+<script type="text/javascript">
+
+var myLink = document.getElementById('mylink');
+
+myLink.onclick = function(){
+
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "choiceGame.js."; 
+    document.getElementsByTagName("head")[0].appendChild(script);
+    return false;
+
+}
+
+
+</script>
+
+<!--Story and interaction-->
+
+<div id="intro"></div>
+
+<div id="story1" class="story"></div>
+
+
+<button id="jump" class="button" type="button">Jump off the pillar.</button>
+<button id="wait" class="button" type="button">Wait for something to happen.</button>
+
+<div id="story2" class="story"></div>
+
+<button id="jump2" class="button" type="button">Jump off the pillar.</button>
+<button id="joinHim" class="button" type="button">Accept the voice's offer.</button>
+
+<div id="story3" class="story"></div>
+
+<button id="standStill" class="button" type="button">Stand still</button>
+<button id="run" class="button" type="button">Run away!!!!</button>
+
+<div id ="story4" class="story"></div>
+
+<button id="escape" class="button" type="button">Run in another direction</button>
+<button id="smash" class="button" type ="button">Attempt to smash through the wall</button>
+
+<div id="story5" class="story"></div>
+
+<button id="endButton" class="button" type="button">The End</button>
+<button id="restart" class="button" type="button">Press To Restart</button>
+
+<div id="end"></div>
+
+</body>
+ 
+</html>

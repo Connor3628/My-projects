@@ -1,0 +1,36 @@
+.story{
+	color:red;
+	font-size:2em;
+	}
+#intro{
+	color:red;
+	font-size:2em;
+}
+body{
+	background-image: url("https://images4.alphacoders.com/108/108664.jpg");
+}
+#mainContainer{
+	width:800px;
+	margin:auto;
+	z-index:1;
+	line-height:2;
+}
+#end{
+	color:red;
+	font-size:2em;
+}
+#mylink{
+	color:red;
+	font-size:2em;
+}
+.button{
+	display:none;
+}
+#info{
+	font-weight:bold;
+	color:rgb(112,1,1);
+}
+#deathTextLarge:hover{
+	font-size: 30px;
+	transition: font-size 1s linear;
+}
