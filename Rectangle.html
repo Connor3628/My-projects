@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Paddle Game</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+		
+    </style>
+</head>
+<body>
+<h1>Instructions</h1>
+<p>Hit the square with the paddle at the bottom of the screen. You have 5 lives. If you hit the square you gain 1 point but if you miss you loose 1 life. If your lives fall below 0 you loose and the game restarts. Score 10 points to win.</p>
+<canvas id="myCanvas" width="1000" height="800"></canvas>
+
+<script>
+    var canvas; //This variable will be use as a reference to the canvas object
+    var ctx; //A variable to hold the value of the context
+    //Random Numbers
+    var randomNums = {yRandom:Math.random() * (900 - 100) + 100, xRandom:Math.random() * (700 - 100) + 100, yRandom2:Math.random() * (900 - 100) + 100, xRandom2:Math.random() * (700 - 100) + 100, ballRandomX:Math.random() * (900 - 100) + 100, ballRandomY:Math.random() * (700 - 100) + 100};
+    //Square Ball
+    var rectX = randomNums.ballRandomX;//rect X pos
+    var rectY = randomNums.ballRandomY;//rect Y pos
+    var rectWidth = 25;//width
+    var rectHeight = 25;//height
+    var rectSpeedX = 10;
+    var rectSpeedY = 10; 
+    //Paddle
+    var rectX2 = 400;//rect X pos
+    var rectY2 = 790;//rect Y pos
+    var rectWidth2 = 100;//width
+    var rectHeight2 = 20;//height
+    //Obstruction
+    var rectX3 = randomNums.xRandom;
+    var rectY3 = randomNums.yRandom;
+    var rectWidth3 = 300;
+    var rectHeight3 = 25;
+    //Obstruction
+    var rectX4 = randomNums.xRandom2;
+    var rectY4 = randomNums.yRandom2;
+    var rectWidth4 = 300;
+    var rectHeight4 = 25;
+    
+    var score = 0;
+    var lives = 5;
+    
+    const WIDTH = 1000; //Width of the canvas
+    const HEIGHT = 800; //Height of the canvas
+    
+    function mouseMove(event){
+        rectX2 = rectX2 = event.pageX-((document.body.clientWidth-WIDTH)/2+ (rectWidth2/2));
+    }
+    document.addEventListener("mousemove", mouseMove);
+
+    
+    window.onload = function () {
+        canvas = document.getElementById("myCanvas");
+        ctx = canvas.getContext('2d');
+        
+        var framesPerSecond = 30; //FPS
+	setInterval(function(){
+		drawEverything();//Calling the rect function 30 FPS
+        movement();
+        gameReset();
+        winCondition();
+	}, 1000/framesPerSecond); //Calls the move and draw function using an inline function. 30 FPS 1000/30
+	
+    }
+    function drawEverything(){
+        ctx.fillStyle = 'red' //Draws the white background every frame covering square
+        ctx.fillRect(0,0,WIDTH, HEIGHT); //background
+        ctx.fillStyle = 'black'
+        ctx.fillRect(rectX, rectY, rectWidth, rectHeight); //redraws the recntangle each frame which gives the illusion of movement. moving square
+        ctx.fillRect(rectX2, rectY2, rectWidth2, rectHeight2); //paddle
+        ctx.fillRect(rectX3, rectY3, rectWidth3, rectHeight3); //obstruction
+        ctx.fillRect(rectX4, rectY4, rectWidth4, rectHeight4) //obstruction
+        ctx.fillText("Score", 100,50);
+        ctx.fillText(score, 100,100); //score count
+        ctx.fillText("Lives", 900,50);
+        ctx.fillText(lives, 900,100); //life count
+    }
+    function movement(){
+        rectX += rectSpeedX;
+        rectY += rectSpeedY;
+        
+        if (rectX > WIDTH-12.5|| rectX < 0){
+            rectSpeedX = -rectSpeedX;
+        }
+        if (rectY > HEIGHT-12.5 || rectY < 0){
+            rectSpeedY = -rectSpeedY;
+        }
+        //console.log(rectX2);
+        if(rectX < rectX2 + rectWidth2 && rectX + rectWidth > rectX2 && rectY < rectY2 + rectHeight2 && rectHeight + rectY > rectY2){
+            //console.log("Hi")
+            score += 1
+            //rectSpeedX++
+            //rectSpeedY++
+            var deltaY = rectY
+								-(rectY+rectHeight2/2); 
+								rectSpeedY = deltaY * 2;
+        } else if(rectY > HEIGHT-12.5){
+            //console.log('Bye');
+            lives -=1
+                        
+        }
+        if(rectX < rectX3 + rectWidth3 && rectX + rectWidth > rectX3 && rectY < rectY3 + rectHeight3 && rectHeight + rectY > rectY3){
+          var deltaY = rectY
+								-(rectY+rectHeight3/2); 
+								rectSpeedY = deltaY * 2;  
+        }
+        if(rectX < rectX4 + rectWidth4 && rectX + rectWidth > rectX4 && rectY < rectY4 + rectHeight4 && rectHeight + rectY > rectY4){
+          var deltaY = rectY
+								-(rectY+rectHeight4/2); 
+								rectSpeedY = deltaY * 2;  
+        }
+        if (rectX2 > WIDTH - 100) {
+            rectX2 = 900;
+            console.log("Hi");
+        } else if(rectX2 < 0){
+            rectX2 = 0;
+            console.log("Bye");
+        }
+    }
+    function gameReset(){
+        if(lives < 0){
+            alert("Game Over. Click Ok to restart. Remember do not let your lives fall below 0");
+            location.reload();
+        }
+    }
+    function winCondition(){
+        if(score >= 10){
+            alert("Congratulations you won! Hit 'OK' to restart the game.");
+            location.reload();
+        }
+    }
+   //if(rectX < rectX2 + rectWidth2 && rectX + rectWidth > rectX2 && rectY < rectY2 + rectHeight2 && rectHeight + rectY > rectY2)
+</script>
+
+</body>
+
+</html>
