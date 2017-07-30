@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Paddle Game</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+		
+    </style>
+</head>
+<body>
+<h1>Instructions</h1>
+<p>Hit the square with the paddle at the bottom of the screen. You have 5 lives. If you hit the square you gain 1 point but if you miss you loose 1 life. If your lives fall below 0 you loose and the game restarts. Score 10 points to win.</p>
+<canvas id="myCanvas" width="1000" height="800"></canvas>
+
+<script>
+	var canvas = document.getElementById("myCanvas");	 //This variable will be use as a reference to the canvas object
+	var ctx = canvas.getContext('2d');	//A variable to hold the value of the context
+	
+	var framesPerSecond = 60; //FPS
+	
+    const width = canvas.width; //Width of the canvas
+    const height = canvas.height; //Height of the canvas	
+	
+	//Creating a ball object with random x, y positions, x, y velocities and a width and height
+	//creation put in function so the ball can be reset when a live is lost...
+	function spawnBall(){
+		ball = {
+			x: Math.random() * (width - 25), 	//random x across the width - 25 as 25 is the width of ball and this stops it spawning half on screen
+			y: 100, 
+			vx: 5, 
+			vy: 5, 
+			w: 25,
+			h: 25
+		}
+	}
+	
+	spawnBall();	//spawn it for the first time
+		
+    //Creating a paddle object with x positon, width and height (y position not needed as will always be on bottom of screen...
+	paddle = {
+		x: width / 2 - 50,		//half way on screen - 50 which is half of its width to center it
+		w: 100,
+		h: 20
+	}
+	
+	//A future optimizatio could be to define all the obstructionsas objects in an array so that you could easily add more or less
+	//but for now just keep them as seperate objects for simplicity...
+	
+    //Creating the first obstruction object with a random x, y position, a width and a height
+    obstruction1 = {
+		x: Math.random() * (width - 300),
+		y: Math.random() * (height - 300),	//only spawn in top half
+		w: 300,
+		h: 25
+	}
+	
+	//Creating the second obstruction object with a random x, y position, a width and a height
+    obstruction2 = {
+		x: Math.random() * (width - 300),
+		y: Math.random() * (height/2),		//only apawn in top half
+		w: 300,
+		h: 25
+	}
+	
+	//Initialising score and live variables
+    var score = 0;
+    var lives = 5;
+    
+    
+    function mouseMove(event){
+        paddle.x = event.clientX - canvas.getBoundingClientRect().left - paddle.w / 2;
+		if (paddle.x < 0) paddle.x = 0;
+		if (paddle.x + paddle.w > width) paddle.x = width - paddle.w;
+    }
+    document.addEventListener("mousemove", mouseMove);
+
+    function drawEverything(){
+        ctx.fillStyle = 'red' //Draws the white background every frame covering square
+        ctx.fillRect(0, 0, width, height); //background
+		
+        ctx.fillStyle = 'black'
+        ctx.fillRect(ball.x, ball.y, ball.w, ball.h); 									//ball
+        ctx.fillRect(paddle.x, height - paddle.h, paddle.w, paddle.h); 					//paddle
+        ctx.fillRect(obstruction1.x, obstruction1.y, obstruction1.w, obstruction1.h);	//obstruction1
+		ctx.fillRect(obstruction2.x, obstruction2.y, obstruction2.w, obstruction2.h);	//obstruction2
+		
+		ctx.font = "20px cambria"
+		ctx.fillStyle = "white"
+        ctx.fillText("Score", 100,50);
+        ctx.fillText(score, 100,100); //score count
+        ctx.fillText("Lives", 900,50);
+        ctx.fillText(lives, 900,100); //life count
+    }
+    function movement(){
+        ball.x += ball.vx;
+		ball.y += ball.vy;
+		
+        if (ball.x + ball.w > width || ball.x < 0){
+            ball.vx *= -1;
+        }
+        if (ball.y + ball.h > height || ball.y < 0){
+            ball.vy *= -1;
+        }
+		
+		if (ball.y + ball.h > height - paddle.h) { 	//if ball past the paddles top.. (either lose life or gain score)			
+			if (ball.x + ball.w > paddle.x && ball.x < paddle.x + paddle.w){	//if within paddle then score + 1 and bounce
+				score += 1;
+				ball.vy *= -1.5;	//reverse direction and speed it up to make it more difficult
+			} else {						//else if missed by paddle lose a life and respawn ball
+				lives -= 1;
+				spawnBall()			
+			}
+		}
+		
+		//check for ball collision width obstruction1
+		if (ball.x > obstruction1.x && ball.x + ball.w < obstruction1.x + obstruction1.w){		//if inside the two edges of obstruction
+			//once we know the ball is inside the sides of the obstruction we need to check if either the top edge of the ball is under the top edge of the obstruct. but above the bottom edge
+			//or if the bottom edge of the ball is above the bottom edge of the obstruct. but below the top edge of the obstruct.
+			if ((ball.y > obstruction1.y && ball.y < obstruction1.y + obstruction1.h) || (ball.y + ball.h > obstruction1.y && ball.y + ball.h < obstruction1.y + obstruction1.h)){
+				ball.vy *= -1;
+			}
+		}
+		
+		//check for ball collision width obstruction2
+		if (ball.x > obstruction2.x && ball.x + ball.w < obstruction2.x + obstruction2.w){		//if inside the two edges of obstruction
+			//once we know the ball is inside the sides of the obstruction we need to check if either the top edge of the ball is under the top edge of the obstruct. but above the bottom edge
+			//or if the bottom edge of the ball is above the bottom edge of the obstruct. but below the top edge of the obstruct.
+			if ((ball.y > obstruction2.y && ball.y < obstruction2.y + obstruction2.h) || (ball.y + ball.h > obstruction2.y && ball.y + ball.h < obstruction2.y + obstruction2.h)){
+				ball.vy *= -1;
+			}
+		}
+		
+    }
+    function gameReset(){
+        if(lives < 0){
+            alert("Game Over. Click Ok to restart. Remember do not let your lives fall below 0");
+            location.reload();
+        }
+    }
+    function winCondition(){
+        if(score >= 10){
+            alert("Congratulations you won! Hit 'OK' to restart the game.");
+            location.reload();
+        }
+    }
+	
+	function update(){
+		movement();
+		gameReset();
+		winCondition();
+		drawEverything(); //Calling the rect function 30 FPS
+	}
+	
+	setInterval(update, 1000/ framesPerSecond)
+	
+</script>
+
+</body>
+
+</html>
