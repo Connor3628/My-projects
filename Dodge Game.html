@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Dodge Game</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+		</style>
+</head>
+<body>
+    <canvas id="myCanvas" width="800" height="1000"></canvas>  
+    <script>
+        var canvas = document.getElementById("myCanvas");	 //This variable will be use as a reference to the canvas object
+        var ctx = canvas.getContext('2d');	//A variable to hold the value of the context
+        
+        var framesPerSecond = 60; //FPS
+	
+        const width = canvas.width; //Width of the canvas
+        const height = canvas.height; //Height of the canvas	
+        
+        function createPlayer(){
+            player = {
+                x:400,
+                y:600,
+                //vx:5,
+                w:25,
+                h:25,
+            }   
+        }
+        createPlayer();//Creates player once.
+        
+       
+            hazard = {
+                x:Math.random() * (width),
+                y:0,
+                vx:10,
+                w:25,
+                h:25,
+            }
+            hazard2 ={
+                x:Math.random() * (width),
+                y:0,
+                vx:10,
+                w:25,
+                h:25,  
+            }
+        function createHazard(){
+                 hazard = {
+                x:Math.random() * (width),
+                y:0,
+                vx:10,
+                w:25,
+                h:25,
+            }
+            hazard2 ={
+                x:Math.random() * (width),
+                y:0,
+                vx:10,
+                w:25,
+                h:25,  
+            } 
+        }
+        setInterval(createHazard, 2000);
+        
+        function mouseMove(event){
+        player.x = event.clientX - canvas.getBoundingClientRect().left - player.w / 2;
+		if (player.x < 0) player.x = 0;
+		if (player.x + player.w > width) player.x = width - player.w;
+        }
+        document.addEventListener("mousemove", mouseMove);
+        
+        function drawEverything(){
+            ctx.fillStyle = 'red'; //Draws the red background every frame covering square
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.fillStyle = 'black';
+            ctx.fillRect(player.x, player.y, player.w, player.h); //Player
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(hazard.x, hazard.y, hazard.w, hazard.h); //Hazard
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(hazard2.x, hazard2.y, hazard2.w, hazard2.h); //Hazard 2
+            
+        }
+        
+        function movement(){
+            hazard.y += hazard.vx;   
+            hazard2.y += hazard2.vx; 
+            
+           if (player.x > hazard.x && player.x + player.w < hazard.x + hazard.w){		//if inside the two edges of obstruction
+			//once we know the ball is inside the sides of the obstruction we need to check if either the top edge of the ball is under the top edge of the obstruct. but above the bottom edge
+			//or if the bottom edge of the ball is above the bottom edge of the obstruct. but below the top edge of the obstruct.
+			if ((player.y > hazard.y && player.y < hazard.y + hazard.h) || (player.y + player.h > hazard.y && player.y + player.h < hazard.y + hazard.h)){
+				console.log("V");
+			}
+		}
+		
+		//check for ball collision width obstruction2
+		if (player.x > hazard2.x && player.x + player.w < hazard2.x + hazard2.w){		//if inside the two edges of obstruction
+			//once we know the ball is inside the sides of the obstruction we need to check if either the top edge of the ball is under the top edge of the obstruct. but above the bottom edge
+			//or if the bottom edge of the ball is above the bottom edge of the obstruct. but below the top edge of the obstruct.
+			if ((player.y > hazard2.y && player.y < hazard2.y + hazard2.h) || (player.y + player.h > hazard2.y && player.y + player.h < hazard2.y + hazard2.h)){
+				console.log("D");
+			}
+		}
+        }
+        
+        function update(){
+            drawEverything();
+            movement();
+        }
+        setInterval(update, 1000/ framesPerSecond)
+    </script>
+</body>
+</html>
